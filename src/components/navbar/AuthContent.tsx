@@ -1,7 +1,9 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { signIn } from "next-auth/react";
 
 function AuthContent() {
   return (
@@ -23,11 +25,17 @@ function AuthContent() {
         </div>
       </div>
       <div className="flex gap-4">
-        <button className="mt-4 flex items-center gap-4 rounded-md border px-10 py-2">
+        <button
+          onClick={() => signIn("google", { redirect: false })}
+          className="mt-4 flex items-center gap-4 rounded-md border px-10 py-2"
+        >
           <FcGoogle className="text-xl" />
           Sign in with Google
         </button>
-        <button className="mt-4 flex items-center gap-4 rounded-md border px-10 py-2">
+        <button
+          onClick={() => signIn("github", { redirect: false })}
+          className="mt-4 flex items-center gap-4 rounded-md border px-10 py-2"
+        >
           <FaGithub className="text-xl text-purple-800" />
           Sign in with Github
         </button>
