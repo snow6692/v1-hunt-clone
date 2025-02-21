@@ -17,6 +17,7 @@ import { PiCalendar, PiPlanet } from "react-icons/pi";
 import { FaDiscord, FaTwitter } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { createProduct } from "@/lib/actions/productAction";
 function NewProductPage() {
   const [step, setStep] = useState(7);
   const [name, setName] = useState("");
