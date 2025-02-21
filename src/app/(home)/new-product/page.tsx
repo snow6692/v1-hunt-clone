@@ -15,8 +15,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PiCalendar, PiPlanet } from "react-icons/pi";
 import { FaDiscord, FaTwitter } from "react-icons/fa";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 function NewProductPage() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(7);
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [headline, setHeadline] = useState("");
@@ -24,6 +26,7 @@ function NewProductPage() {
   const [uploadLogoUrl, setUploadLogoUrl] = useState("");
   const [website, setWebsite] = useState("");
   const [twitter, setTwitter] = useState("");
+  const [loading, setLoading] = useState(false);
   const [discord, setDiscord] = useState("");
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -51,6 +54,9 @@ function NewProductPage() {
       .replace(/\\/g, "-") // Replace periods with hyphens in the slug
       .replace(/\//g, "-"); // Replace periods with hyphens in the slug
     setSlug(slugValue);
+  };
+  const handleGoToProducts = () => {
+    window.location.href = "/my-products";
   };
   const handleWebsiteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWebsite(e.target.value);
@@ -85,6 +91,47 @@ function NewProductPage() {
   const handleProductImagesUpload = useCallback((urls: string[]) => {
     setUploadedProductImages(urls);
   }, []);
+
+  const submitAnotherProduct = () => {
+    setStep(1);
+    setName("");
+    setSlug("");
+    setHeadline("");
+    setShortDescription("");
+    setDate(new Date());
+    setWebsite("");
+    setTwitter("");
+    setDiscord("");
+    setSelectedCategories([]);
+    setUploadedProductImages([]);
+    setUploadLogoUrl("");
+  };
+  const submitProduct = async () => {
+    setLoading(true);
+    const formattedDate = date ? format(date, "MM/dd/yyyy") : "";
+
+    try {
+      await createProduct({
+        name,
+        slug,
+        headline,
+        website,
+        twitter,
+        discord,
+        description: shortDescription,
+        logo: uploadLogoUrl,
+        releaseDate: formattedDate,
+        images: uploadedProductImages,
+        category: selectedCategories,
+      });
+      toast.success("Product is sent to admin");
+      setStep(8);
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong try again");
+      setLoading(false);
+    }
+  };
   return (
     <div className="flex items-center justify-center py-8 md:py-20">
       <div className="px-8 md:mx-auto md:w-3/5">
@@ -361,14 +408,142 @@ function NewProductPage() {
           </div>
         )}
 
-        <div className="flex items-center justify-center gap-5">
-          <button className="mt-20" onClick={previousStep}>
-            Previous step
-          </button>
-          <button className="mt-20" onClick={nextStep}>
-            next step
-          </button>
-        </div>
+        {/* Step7 */}
+        {step === 7 && (
+          <div className="space-y-10">
+            <h1 className="text-4xl font-semibold"> 🔍 Review and submit</h1>
+            <p className="mt-4 text-xl font-light leading-8">
+              Review the details of your product and submit it to the world.
+              Your product will be reviewed by our team before it goes live.
+            </p>
+
+            <div className="mt-10 grid grid-cols-2 gap-8">
+              <div className="">
+                <div className="font-semibold">Name of the product</div>
+                <div className="mt-2 text-gray-600">{name}</div>
+              </div>
+
+              <div className="">
+                <div className="font-semibold">Slug ( URL ) </div>
+                <div className="mt-2 text-gray-600">{slug}</div>
+              </div>
+
+              <div className="">
+                <div className="font-semibold">Category</div>
+                <div className="mt-2 text-gray-600">
+                  {selectedCategories.join(", ")}
+                </div>
+              </div>
+
+              <div>
+                <div className="font-semibold">Website URL</div>
+                <div className="mt-2 text-gray-600">{website}</div>
+              </div>
+
+              <div className="">
+                <div className="font-semibold">Headline</div>
+                <div className="mt-2 text-gray-600">{headline}</div>
+              </div>
+              <div className="">
+                <div className="font-semibold">Short description</div>
+                <div className="mt-2 text-gray-600">{shortDescription}</div>
+              </div>
+
+              <div>
+                <div className="font-semibold">Twitter</div>
+                <div className="mt-2 text-gray-600">{twitter}</div>
+              </div>
+
+              <div>
+                <div className="font-semibold">Discord</div>
+                <div className="mt-2 text-gray-600">{discord}</div>
+              </div>
+
+              <div className="">
+                <div className="font-semibold">
+                  Release date - Pending Approval
+                </div>
+                <div className="mt-2 text-gray-600">
+                  {date ? date.toDateString() : "Not specified"}
+                </div>
+              </div>
+
+              <div className="cols-span-2" />
+              <div className="font-semibold">Product Images</div>
+              <div className="mt-2 flex items-center justify-center gap-5 text-center">
+                {uploadedProductImages.map((url, index) => (
+                  <div key={index} className="relative h-28 w-28">
+                    <Image
+                      priority
+                      src={url}
+                      alt="Uploaded Product Image"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-md"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 8 && (
+          <div className="space-y-10">
+            <div className="text-4xl font-semibold"> Congratulations 🎉 </div>
+            <div className="mt-4 text-xl font-light leading-8">
+              Your product has been successfully submitted. Our team will review
+              it and get back to you soon.
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <div
+                onClick={handleGoToProducts}
+                className="mt-4 flex w-60 cursor-pointer items-center justify-center rounded bg-[#ff6154] px-4 py-2 text-white"
+              >
+                Go to your products
+              </div>
+
+              <Separator />
+
+              <div
+                onClick={submitAnotherProduct}
+                className="mt-4 flex w-60 cursor-pointer items-center justify-center rounded px-4 py-2 text-[#ff6154]"
+              >
+                Submit another product
+              </div>
+            </div>
+          </div>
+        )}
+        {step !== 8 && (
+          <>
+            <div className="mt-10 flex items-center justify-between">
+              {step !== 1 && (
+                <button onClick={previousStep} className="text-gray-600">
+                  Previous
+                </button>
+              )}
+
+              <div className="flex items-center">
+                {step === 7 ? (
+                  <button
+                    onClick={submitProduct}
+                    className="mt-4 items-end rounded-md bg-[#ff6154] px-4 py-2 text-white"
+                  >
+                    Submit
+                  </button>
+                ) : (
+                  <button
+                    onClick={nextStep}
+                    className="mt-4 items-end rounded-md bg-[#ff6154] px-4 py-2 text-white"
+                  >
+                    {step === 7 ? "Submit" : "Continue"}
+                  </button>
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
