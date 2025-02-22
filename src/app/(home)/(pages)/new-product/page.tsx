@@ -1,6 +1,7 @@
 "use client";
 import { ImagesUploader } from "@/components/ImagesUploader";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
 import { LogoUploader } from "@/components/LogoUploader";
 import { CATEGORIES } from "@/constants/constants";
 import Image from "next/image";
@@ -18,8 +19,9 @@ import { FaDiscord, FaTwitter } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { createProduct } from "@/lib/actions/productAction";
+
 function NewProductPage() {
-  const [step, setStep] = useState(7);
+  const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [headline, setHeadline] = useState("");
@@ -34,9 +36,53 @@ function NewProductPage() {
   const [uploadedProductImages, setUploadedProductImages] = useState<string[]>(
     [],
   );
-  const nextStep = useCallback(() => {
-    setStep(step + 1);
-  }, [step]);
+  const nextStep = () => {
+    if (step === 1 && name.length < 4) {
+      toast.error("Please enter at least 4 characters for the product name.");
+      return;
+    }
+
+    if (step === 2 && selectedCategories.length < 3) {
+      toast.error("Please select at least 3 categories for the product.");
+      return;
+    }
+
+    if (step === 3 && headline.length < 10) {
+      toast.error("Please enter at least 10 characters for the headline.");
+      return;
+    }
+
+    if (step === 3 && shortDescription.length < 20) {
+      toast.error(
+        "Please enter at least 20 characters for the short description.",
+      );
+      return;
+    }
+
+    if (step === 4 && !uploadLogoUrl) {
+      toast.error("Please upload a logo for the product.");
+      return;
+    }
+
+    if (step === 4 && uploadedProductImages.length < 1) {
+      toast.error("Upload at least 3 images for the product.");
+      return;
+    }
+
+    if (step === 5 && !date) {
+      toast.error(
+        "Please select a release date or choose the Coming soon option.",
+      );
+      return;
+    }
+
+    if (step === 6 && !website && !twitter && !discord) {
+      toast.error("Please enter at least one link for the product.");
+      return;
+    }
+
+    setStep((prev) => prev + 1);
+  };
 
   const previousStep = useCallback(() => {
     setStep(step - 1);
@@ -138,7 +184,13 @@ function NewProductPage() {
       <div className="px-8 md:mx-auto md:w-3/5">
         {/* Step 1 */}
         {step === 1 && (
-          <div className="space-y-10">
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }} //slide in from the right
+            animate={{ opacity: 1, x: 0 }} //slide to the center
+            exit={{ opacity: 0, x: "-100%" }} //Slide out the left
+            transition={{ duration: 0.4 }}
+            className="space-y-10"
+          >
             <h1 className="text-4xl font-semibold"> 📦 New product</h1>
             <p className="mt-4 text-xl font-light leading-8">
               Ready to showcase your product to the world? You came to the right
@@ -174,14 +226,19 @@ function NewProductPage() {
                 readOnly
               />
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Step 2 */}
         {step === 2 && (
-          <div className="space-y-10">
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }} //slide in from the right
+            animate={{ opacity: 1, x: 0 }} //slide to the center
+            exit={{ opacity: 0, x: "-100%" }} //Slide out the left
+            transition={{ duration: 0.4 }}
+            className="space-y-10"
+          >
             <h1 className="text-4xl font-semibold">
-              {" "}
               📊 Choose categories for you product
             </h1>
             <p className="mt-4 text-xl font-light leading-8">
@@ -193,10 +250,11 @@ function NewProductPage() {
               <h2 className="font-medium">Select categories</h2>
               <div className="grid grid-cols-4 items-center justify-center gap-2 pt-4">
                 {CATEGORIES.map((category) => (
-                  <div
+                  <motion.div
                     className="flex rounded-full border"
                     key={category}
                     onClick={() => handleCategoryToggle(category)}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <div
                       className={`w-full cursor-pointer p-2 text-center text-xs md:text-sm ${
@@ -207,16 +265,22 @@ function NewProductPage() {
                     >
                       {category}
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Step 3 */}
         {step === 3 && (
-          <div className="space-y-10">
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }} //slide in from the right
+            animate={{ opacity: 1, x: 0 }} //slide to the center
+            exit={{ opacity: 0, x: "-100%" }} //Slide out the left
+            transition={{ duration: 0.4 }}
+            className="space-y-10"
+          >
             <h1 className="text-4xl font-semibold">Product Details</h1>
             <p className="mt-4 text-xl font-light leading-8">
               Keep it simple and clear. Describe your products in a way that
@@ -256,12 +320,18 @@ function NewProductPage() {
                 {shortDescription.length} / 300
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Step 4 */}
         {step === 4 && (
-          <div className="space-y-10">
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }} //slide in from the right
+            animate={{ opacity: 1, x: 0 }} //slide to the center
+            exit={{ opacity: 0, x: "-100%" }} //Slide out the left
+            transition={{ duration: 0.4 }}
+            className="space-y-10"
+          >
             <h1 className="text-4xl font-semibold">
               🖼️ Add images to showcase your product
             </h1>
@@ -315,12 +385,18 @@ function NewProductPage() {
                 />
               )}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Step 5 */}
         {step === 5 && (
-          <div className="space-y-10">
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }} //slide in from the right
+            animate={{ opacity: 1, x: 0 }} //slide to the center
+            exit={{ opacity: 0, x: "-100%" }} //Slide out the left
+            transition={{ duration: 0.4 }}
+            className="space-y-10"
+          >
             <h1 className="text-4xl font-semibold"> 🗓️ Release Date</h1>
             <p className="mt-4 text-xl font-light leading-8">
               When will your product be available to the public select the date.
@@ -355,12 +431,18 @@ function NewProductPage() {
                 <Button onClick={() => setDate(new Date())}>Reset data</Button>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Strep 6  */}
         {step === 6 && (
-          <div className="space-y-10">
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }} //slide in from the right
+            animate={{ opacity: 1, x: 0 }} //slide to the center
+            exit={{ opacity: 0, x: "-100%" }} //Slide out the left
+            transition={{ duration: 0.4 }}
+            className="space-y-10"
+          >
             <h1 className="text-4xl font-semibold">Additional Links </h1>
             <p className="mt-4 text-xl font-light leading-8">
               Add links to your product&apos;s website, social media, and other
@@ -406,12 +488,18 @@ function NewProductPage() {
                 onChange={handleDiscordChange}
               />
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Step7 */}
         {step === 7 && (
-          <div className="space-y-10">
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }} //slide in from the right
+            animate={{ opacity: 1, x: 0 }} //slide to the center
+            exit={{ opacity: 0, x: "-100%" }} //Slide out the left
+            transition={{ duration: 0.4 }}
+            className="space-y-10"
+          >
             <h1 className="text-4xl font-semibold"> 🔍 Review and submit</h1>
             <p className="mt-4 text-xl font-light leading-8">
               Review the details of your product and submit it to the world.
@@ -486,11 +574,17 @@ function NewProductPage() {
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {step === 8 && (
-          <div className="space-y-10">
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }} //slide in from the right
+            animate={{ opacity: 1, x: 0 }} //slide to the center
+            exit={{ opacity: 0, x: "-100%" }} //Slide out the left
+            transition={{ duration: 0.4 }}
+            className="space-y-10"
+          >
             <div className="text-4xl font-semibold"> Congratulations 🎉 </div>
             <div className="mt-4 text-xl font-light leading-8">
               Your product has been successfully submitted. Our team will review
@@ -514,11 +608,17 @@ function NewProductPage() {
                 Submit another product
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
         {step !== 8 && (
           <>
-            <div className="mt-10 flex items-center justify-between">
+            <motion.div
+              initial={{ opacity: 0, x: "100%" }} //slide in from the right
+              animate={{ opacity: 1, x: 0 }} //slide to the center
+              exit={{ opacity: 0, x: "-100%" }} //Slide out the left
+              transition={{ duration: 0.4 }}
+              className="mt-10 flex items-center justify-between"
+            >
               {step !== 1 && (
                 <button onClick={previousStep} className="text-gray-600">
                   Previous
@@ -542,7 +642,7 @@ function NewProductPage() {
                   </button>
                 )}
               </div>
-            </div>
+            </motion.div>
           </>
         )}
       </div>

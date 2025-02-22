@@ -26,7 +26,7 @@ function AvatarComponent({ image }: IProps) {
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none">
           <Avatar>
-            <AvatarFallback className="size-8 rounded-full bg-black" />
+            <AvatarFallback className="size-[40px] rounded-full bg-black" />
             <AvatarImage src={image!} />
           </Avatar>
         </DropdownMenuTrigger>

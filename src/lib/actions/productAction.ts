@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import prisma from "../db";
+import { revalidatePath } from "next/cache";
 
 interface ProductData {
   name: string;
@@ -17,7 +18,7 @@ interface ProductData {
   category: string[];
   rank?: number;
 }
-export const createProduct = async ({
+export async function createProduct({
   name,
   slug,
   headline,
@@ -29,7 +30,7 @@ export const createProduct = async ({
   discord,
   images,
   category,
-}: ProductData) => {
+}: ProductData) {
   try {
     const authenticatedUser = await auth();
 
@@ -76,9 +77,44 @@ export const createProduct = async ({
       },
     });
 
+    revalidatePath("/my-products");
+
     return product;
   } catch (error) {
     console.error(error);
     return null;
   }
-};
+}
+
+export async function getOwnerProducts() {
+  const session = await auth();
+  if (!session) return [];
+  const userId = await session?.user?.id;
+
+  const products = await prisma.product.findMany({ where: { userId } });
+
+  return products;
+}
+
+export async function getProductById(id: string) {
+  try {
+    const authenticatedUser = await auth();
+
+    if (!authenticatedUser) {
+      throw new Error("You must be signed in to create a product");
+    }
+
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        categories: true,
+        images: true,
+      },
+    });
+    if (!product) throw new Error("This product not found");
+
+    return product;
+  } catch (error) {
+    console.log(error);
+  }
+}
