@@ -3,7 +3,6 @@ import { getProductById } from "@/lib/actions/productAction";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { PiArrowLeft } from "react-icons/pi";
 import EditProduct from "./EditProduct";
 import DeleteProduct from "./DeleteProduct";
@@ -46,7 +45,7 @@ async function page({ params }: { params: Promise<{ productId: string }> }) {
         </div>
 
         <div className="flex items-center gap-4">
-          <EditProduct />
+          <EditProduct product={product} />
           <DeleteProduct />
         </div>
       </div>

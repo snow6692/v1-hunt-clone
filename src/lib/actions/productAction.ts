@@ -118,3 +118,62 @@ export async function getProductById(id: string) {
     console.log(error);
   }
 }
+
+export async function updateProduct(
+  productId: string,
+  {
+    name,
+    slug,
+    headline,
+    description,
+    logo,
+    releaseDate,
+    website,
+    twitter,
+    discord,
+    images,
+  }: ProductData,
+) {
+  const session = await auth();
+
+  if (!session) {
+    throw new Error("You must be signed in to update a product");
+  }
+
+  const product = await prisma.product.findUnique({
+    where: {
+      id: productId,
+    },
+  });
+
+  if (!product) {
+    throw new Error("Product not found");
+  }
+
+  await prisma.product.update({
+    where: {
+      id: productId,
+    },
+    data: {
+      name,
+      slug,
+      headline,
+      description,
+      logo,
+      releaseDate,
+      website,
+      twitter,
+      discord,
+      images: {
+        deleteMany: {
+          productId,
+        },
+        createMany: {
+          data: images.map((image) => ({ url: image })),
+        },
+      },
+      status: "PENDING",
+    },
+  });
+  return product;
+}
