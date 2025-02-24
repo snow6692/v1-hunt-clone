@@ -9,7 +9,7 @@ import Image from "next/image";
 
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
-import { PiCheckCircle, PiFlag, PiPencilLine } from "react-icons/pi";
+import { PiFlag, PiPencilLine } from "react-icons/pi";
 import { toast } from "sonner";
 
 interface EditProductFormProps {

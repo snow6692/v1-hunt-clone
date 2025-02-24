@@ -203,3 +203,15 @@ export const deleteProduct = async (productId: string) => {
   });
   return true;
 };
+
+export async function getPendingProducts() {
+  const products = await prisma.product.findMany({
+    where: { status: "PENDING" },
+    include: {
+      categories: true,
+      images: true,
+    },
+  });
+
+  return products;
+}
