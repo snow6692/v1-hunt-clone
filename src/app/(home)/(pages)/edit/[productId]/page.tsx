@@ -46,7 +46,7 @@ async function page({ params }: { params: Promise<{ productId: string }> }) {
 
         <div className="flex items-center gap-4">
           <EditProduct product={product} />
-          <DeleteProduct />
+          <DeleteProduct productId={product.id} />
         </div>
       </div>
     </div>

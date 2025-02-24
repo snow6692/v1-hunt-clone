@@ -177,3 +177,29 @@ export async function updateProduct(
   });
   return product;
 }
+
+export const deleteProduct = async (productId: string) => {
+  const session = await auth();
+
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("User ID is missing or invalid");
+  }
+
+  const userId = session.user.id;
+
+  const product = await prisma.product.findUnique({ where: { id: productId } });
+
+  if (!product || product.userId !== userId) {
+    throw new Error("Product not found or not authorized");
+  }
+
+  await prisma.product.delete({
+    where: {
+      id: productId,
+    },
+    include: {
+      images: true,
+    },
+  });
+  return true;
+};
