@@ -7,6 +7,9 @@ import { Category, Image as ImageType } from "@prisma/client";
 import { PendingProductsType, PendingProductType } from "@/types/productTypes";
 import { User } from "next-auth";
 import Image from "next/image";
+import ProductModal from "@/components/modals/ProductModal";
+import ActivateProductModal from "@/components/modals/ActivateProductModal";
+import RejectProductModal from "@/components/modals/RejectProductModal";
 
 interface PendingProductsProps {
   pendingProducts: PendingProductsType;
@@ -26,48 +29,27 @@ const PendingProducts: React.FC<PendingProductsProps> = ({
   const [rejectProductModalVisible, setRejectProductModalVisible] =
     useState(false);
 
-  const formattedProducts = pendingProducts
-    ? pendingProducts.map((product) => {
-        if (!product) return;
+  const formattedProducts: PendingProductType[] = pendingProducts
+    ? pendingProducts
+        .map((product) => {
+          if (!product) return null;
 
-        const {
-          id,
-          name,
-          slug,
-          headline,
-          description,
-          logo,
-          releaseDate,
-          website,
-          twitter,
-          discord,
-          createdAt,
-          updatedAt,
-          userId,
-          status,
-          images,
-          categories,
-        } = product;
-
-        return {
-          id,
-          name,
-          slug,
-          headline,
-          description,
-          logo,
-          releaseDate,
-          website,
-          twitter,
-          discord,
-          createdAt,
-          updatedAt,
-          userId,
-          status,
-          images: images.map((image) => image.url),
-          categories: categories.map((category) => category.name),
-        };
-      })
+          return {
+            ...product,
+            images: product.images.map((image) => ({
+              id: image.id,
+              createdAt: image.createdAt,
+              updatedAt: image.updatedAt,
+              productId: image.productId,
+              url: image.url,
+            })),
+            categories: product.categories.map((category) => ({
+              id: category.id,
+              name: category.name,
+            })),
+          };
+        })
+        .filter((product): product is PendingProductType => product !== null)
     : [];
 
   console.log(formattedProducts, "formatted products here");
@@ -115,18 +97,58 @@ const PendingProducts: React.FC<PendingProductsProps> = ({
                 height={200}
               />
             ) : null}
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-2xl font-bold">{product?.name}</h1>
-            <p className="hidden pr-6 text-sm text-gray-500 md:flex">
-              {product?.description}
-            </p>
-            <div className="hidden font-semibold text-gray-500 md:flex">
-              Release Date: {product?.releaseDate}
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold">{product?.name}</h1>
+              <p className="hidden pr-6 text-sm text-gray-500 md:flex">
+                {product?.description}
+              </p>
+              <div className="hidden font-semibold text-gray-500 md:flex">
+                Release Date: {product?.releaseDate}
+              </div>
             </div>
+          </div>
+          <div className="flex items-center justify-center gap-2 md:gap-x-4">
+            <button
+              onClick={() => handleViewProductModal(product)}
+              className="rounded-md bg-[#ff6154] px-4 py-2 text-center text-sm text-white"
+            >
+              View Product
+            </button>
+            <button
+              onClick={() => handleActivateProductModal(product)}
+              className="rounded-md bg-emerald-100 px-4 py-2 text-center text-sm text-white"
+            >
+              <PiCheckCircle className="text-xl text-emerald-500" />
+            </button>
+
+            <button
+              onClick={() => handleRejectProductModal(product)}
+              className="rounded-md bg-red-100 px-4 py-2 text-center text-sm text-white"
+            >
+              <PiXCircle className="text-xl text-red-500" />
+            </button>
           </div>
         </div>
       ))}
+      <ProductModal
+        visible={viewProductModalVisible}
+        setVisible={setViewProductModalVisible}
+      >
+        product
+      </ProductModal>
+      <ActivateProductModal
+        visible={activateProductModalVisible}
+        setVisible={setActivateProductModalVisible}
+      >
+        accept
+      </ActivateProductModal>
+
+      <RejectProductModal
+        visible={rejectProductModalVisible}
+        setVisible={setRejectProductModalVisible}
+      >
+        reject
+      </RejectProductModal>
     </div>
   );
 };
