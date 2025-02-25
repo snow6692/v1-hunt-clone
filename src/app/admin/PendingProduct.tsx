@@ -10,6 +10,7 @@ import Image from "next/image";
 import ProductModal from "@/components/modals/ProductModal";
 import ActivateProductModal from "@/components/modals/ActivateProductModal";
 import RejectProductModal from "@/components/modals/RejectProductModal";
+import ProductModalContent from "@/components/ProductModalContent";
 
 interface PendingProductsProps {
   pendingProducts: PendingProductsType;
@@ -134,6 +135,14 @@ const PendingProducts: React.FC<PendingProductsProps> = ({
         visible={viewProductModalVisible}
         setVisible={setViewProductModalVisible}
       >
+        <ProductModalContent
+          hasUpvoted={false}
+          totalUpvotes={0}
+          authenticatedUser={authenticatedUser}
+          setTotalUpvotes={() => {}}
+          setHasUpvoted={() => {}}
+          currentProduct={currentProduct}
+        />
         product
       </ProductModal>
       <ActivateProductModal
