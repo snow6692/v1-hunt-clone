@@ -14,8 +14,8 @@ interface ProductModalContentProps {
   authenticatedUser: User | undefined;
   totalUpvotes: number;
   hasUpvoted: boolean;
-  setTotalUpvotes: number;
-  setHasUpvoted: boolean;
+  setTotalUpvotes: () => void;
+  setHasUpvoted: () => void;
 }
 function ProductModalContent({
   authenticatedUser,

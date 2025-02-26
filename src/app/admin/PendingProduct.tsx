@@ -11,6 +11,8 @@ import ProductModal from "@/components/modals/ProductModal";
 import ActivateProductModal from "@/components/modals/ActivateProductModal";
 import RejectProductModal from "@/components/modals/RejectProductModal";
 import ProductModalContent from "@/components/ProductModalContent";
+import ActivateProductContent from "@/components/ActivateProductContent";
+import RejectProductModalContent from "@/components/RejectProductModalContent";
 
 interface PendingProductsProps {
   pendingProducts: PendingProductsType;
@@ -149,7 +151,10 @@ const PendingProducts: React.FC<PendingProductsProps> = ({
         visible={activateProductModalVisible}
         setVisible={setActivateProductModalVisible}
       >
-        accept
+        <ActivateProductContent
+          currentProduct={currentProduct}
+          closeModal={() => setActivateProductModalVisible(false)}
+        />
       </ActivateProductModal>
 
       <RejectProductModal
@@ -157,6 +162,10 @@ const PendingProducts: React.FC<PendingProductsProps> = ({
         setVisible={setRejectProductModalVisible}
       >
         reject
+        <RejectProductModalContent
+          currentProduct={currentProduct}
+          closeModal={() => setRejectProductModalVisible(false)}
+        />
       </RejectProductModal>
     </div>
   );

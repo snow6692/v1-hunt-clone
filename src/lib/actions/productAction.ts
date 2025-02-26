@@ -215,3 +215,67 @@ export async function getPendingProducts() {
 
   return products;
 }
+
+export async function activeProduct(productId: string | undefined) {
+  try {
+    const product = await prisma.product.update({
+      where: { id: productId },
+      data: {
+        status: "ACTIVE",
+      },
+    });
+
+    if (!product) throw new Error("This product not found!");
+    await prisma.notification.create({
+      data: {
+        userId: product.userId,
+        body: `Your product ${product.name} has been activated`,
+        type: "ACTIVATED",
+        status: "UNREAD",
+        profilePicture: product.logo,
+        productId: product.id,
+      },
+    });
+    return product;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function rejectProduct(
+  productId: string | undefined,
+  reason: string,
+) {
+  try {
+    const product = await prisma.product.findUnique({
+      where: {
+        id: productId,
+      },
+    });
+
+    if (!product) {
+      throw new Error("Product not found or not authorized");
+    }
+    await prisma.product.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        status: "REJECTED",
+      },
+    });
+
+    await prisma.notification.create({
+      data: {
+        userId: product.userId,
+        body: `Your product "${product.name}" has been rejected. Reason: ${reason}`,
+        type: "REJECTED",
+        status: "UNREAD",
+        profilePicture: `${product.logo}`,
+        productId: product.id,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
