@@ -1,18 +1,21 @@
+"use client";
 import { PendingProductType } from "@/types/productTypes";
 import { User } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { PiCaretUpFill, PiChatCircle, PiUploadSimple } from "react-icons/pi";
 import CarouselComponent from "./CarouselComponent";
+import ShareModal from "./modals/ShareProductModal";
+import ShareModalContent from "./ShareModalContent";
 
 interface ProductModalContentProps {
   currentProduct: PendingProductType | null;
   authenticatedUser: User | undefined;
   totalUpvotes: number;
   hasUpvoted: boolean;
-  setTotalUpvotes: any;
-  setHasUpvoted: any;
+  setTotalUpvotes: number;
+  setHasUpvoted: boolean;
 }
 function ProductModalContent({
   authenticatedUser,
@@ -22,6 +25,10 @@ function ProductModalContent({
   setTotalUpvotes,
   totalUpvotes,
 }: ProductModalContentProps) {
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+  const handleShareClick = () => {
+    setShareModalVisible(true);
+  };
   return (
     <div className="h-full">
       <div className="mx-auto md:w-4/5">
@@ -92,7 +99,7 @@ function ProductModalContent({
                 <p>Discuss</p>
               </div>
               <div
-                //   onClick={handleShareClick}
+                onClick={handleShareClick}
                 className="text-md flex cursor-pointer items-center gap-x-1 text-gray-600"
               >
                 <PiUploadSimple />
@@ -131,6 +138,9 @@ function ProductModalContent({
           </div>
         </div>
       </div>
+      <ShareModal visible={shareModalVisible} setVisible={setShareModalVisible}>
+        <ShareModalContent currentProduct={currentProduct} />
+      </ShareModal>
     </div>
   );
 }
