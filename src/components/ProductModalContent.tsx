@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { PiCaretUpFill, PiChatCircle, PiUploadSimple } from "react-icons/pi";
+import CarouselComponent from "./CarouselComponent";
 
 interface ProductModalContentProps {
   currentProduct: PendingProductType | null;
@@ -98,8 +99,35 @@ function ProductModalContent({
                 <p>Share</p>
               </div>
             </div>
+          </div>
+          {/* Carousel  */}
+          <CarouselComponent productImages={currentProduct?.images ?? []} />
+          <h1 className="pt-10 font-semibold">Community Feedback</h1>
+          <div className="">
+            <div className="mt-4 flex w-full gap-4">
+              <Image
+                src={authenticatedUser?.image ?? ""}
+                alt="profile"
+                width={50}
+                height={50}
+                className="h-12 w-12 rounded-full"
+              />
 
-            {/* Carousel  */}
+              <textarea
+                // value={commentText}
+                // onChange={handleCommentChange}
+                placeholder="What do you think about this product?"
+                className="w-full rounded-md p-4 text-gray-600 focus:outline-none"
+              />
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button
+                // onClick={handleCommentSubmit}
+                className="rounded-md bg-[#ff6154] p-2 text-white"
+              >
+                Comment
+              </button>
+            </div>
           </div>
         </div>
       </div>
