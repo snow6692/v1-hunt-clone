@@ -498,3 +498,31 @@ export const getProductBySlug = async (slug: string) => {
     return null;
   }
 };
+
+export const getProductsByCategoryName = async (category: string) => {
+  const products = await prisma.product.findMany({
+    where: {
+      categories: {
+        some: {
+          name: category,
+        },
+      },
+      status: "ACTIVE",
+    },
+  });
+  return products;
+};
+
+export const getCategories = async () => {
+  const categories = await prisma.category.findMany({
+    where: {
+      products: {
+        some: {
+          status: "ACTIVE",
+        },
+      },
+    },
+  });
+
+  return categories;
+};
