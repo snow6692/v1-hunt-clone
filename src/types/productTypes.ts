@@ -1,4 +1,5 @@
 import {
+  getActiveProducts,
   getPendingProducts,
   getProductById,
 } from "@/lib/actions/productAction";
@@ -12,3 +13,6 @@ export type PendingProductsType = Awaited<
 >;
 
 export type PendingProductType = PendingProductsType[number];
+
+export type ActiveProducts = Awaited<ReturnType<typeof getActiveProducts>>;
+export type ActiveProduct = ActiveProducts[number];
