@@ -14,19 +14,17 @@ import CarouselComponent from "./CarouselComponent";
 import ShareModal from "./modals/ShareProductModal";
 import ShareModalContent from "./ShareModalContent";
 import { CurrentProductType } from "./ProductItem";
-import { commentOnProduct, deleteComment } from "@/lib/actions/productAction";
+import {
+  commentOnProduct,
+  deleteComment,
+  upvoteProduct,
+} from "@/lib/actions/productAction";
 import { toast } from "sonner";
 import { Comment } from "@prisma/client";
 import { Badge } from "./ui/badge";
 
 interface ProductModalContentProps {
-  currentProduct:
-    | PendingProductType
-    | CurrentProductType
-    // | (null & {
-    //     commentData?: Comment & { user: { id: string; name: string } };
-    //   });
-    | null;
+  currentProduct: PendingProductType | CurrentProductType | null;
   authenticatedUser: User | undefined;
   totalUpvotes: number;
   hasUpvoted: boolean;
@@ -74,6 +72,20 @@ function ProductModalContent({
       toast.error("Something went wrong");
     }
   };
+
+  const handleUpvoteClick = async (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event.stopPropagation();
+
+    try {
+      await upvoteProduct(currentProduct?.id);
+      setTotalUpvotes(hasUpvoted ? totalUpvotes - 1 : totalUpvotes + 1);
+      setHasUpvoted(!hasUpvoted);
+    } catch (error) {
+      console.error("Error upvoting product:", error);
+    }
+  };
   return (
     <div className="h-full">
       <div className="mx-auto md:w-4/5">
@@ -112,6 +124,7 @@ function ProductModalContent({
                     ? "border-[#ff6154] from-[#ff6154] to-[#ff4582] text-white"
                     : "border text-black"
                 }`}
+                onClick={handleUpvoteClick}
               >
                 <PiCaretUpFill
                   className={`text-xl ${

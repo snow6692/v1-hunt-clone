@@ -309,7 +309,7 @@ export async function getActiveProducts() {
   return products;
 }
 
-export async function upvoteProduct(productId: string) {
+export async function upvoteProduct(productId: string | undefined) {
   try {
     const authenticatedUser = await auth();
     if (
@@ -336,7 +336,7 @@ export async function upvoteProduct(productId: string) {
     } else {
       await prisma.upvote.create({
         data: {
-          productId,
+          productId: productId!,
           userId,
         },
       });
@@ -357,7 +357,7 @@ export async function upvoteProduct(productId: string) {
           userId: productOwner.userId,
           body: `Upvoted your product`,
           profilePicture: profilePicture,
-          productId: productId,
+          productId: productId!,
           type: "UPVOTE",
           status: "UNREAD",
         },
@@ -438,5 +438,35 @@ export const deleteComment = async (commentId: string) => {
   } catch (error) {
     console.error("Error deleting comment:", error);
     throw error;
+  }
+};
+
+export const getUpvotedProducts = async () => {
+  try {
+    const authenticatedUser = await auth();
+
+    if (
+      !authenticatedUser ||
+      !authenticatedUser.user ||
+      !authenticatedUser.user.id
+    ) {
+      throw new Error("User ID is missing or invalid");
+    }
+
+    const userId = authenticatedUser.user.id;
+
+    const upvotedProducts = await prisma.upvote.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    return upvotedProducts.map((upvote) => upvote.product);
+  } catch (error) {
+    console.error("Error getting upvoted products:", error);
+    return [];
   }
 };
