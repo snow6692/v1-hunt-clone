@@ -1,4 +1,3 @@
-
 import {
   Carousel,
   CarouselContent,
@@ -10,7 +9,11 @@ import Image from "next/image";
 import { Image as ImageType } from "@prisma/client";
 
 interface CarouselProps {
-  productImages: ImageType[];
+  productImages: (string | ImageType)[];
+}
+
+interface CarouselProps {
+  productImages: (string | ImageType)[]; // 🔥 يدعم الحالتين
 }
 
 const CarouselComponent: React.FC<CarouselProps> = ({ productImages }) => {
@@ -22,20 +25,22 @@ const CarouselComponent: React.FC<CarouselProps> = ({ productImages }) => {
       className="w-full overflow-hidden md:overflow-visible"
     >
       <CarouselContent>
-        {Array.from({
-          length: productImages.length,
-        }).map((_, index) => (
-          <CarouselItem key={index} className="basis-1/2">
-            <Image
-              priority
-              src={productImages[index].url}
-              alt="product-image"
-              width={500}
-              height={500}
-              className="h-60 w-full rounded-md border border-gray-200 object-cover"
-            />
-          </CarouselItem>
-        ))}
+        {productImages.map((image, index) => {
+          const imageUrl = typeof image === "string" ? image : image.url;
+
+          return (
+            <CarouselItem key={index} className="basis-1/2">
+              <Image
+                priority
+                src={imageUrl}
+                alt="product-image"
+                width={500}
+                height={500}
+                className="h-60 w-full rounded-md border border-gray-200 object-cover"
+              />
+            </CarouselItem>
+          );
+        })}
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />

@@ -470,3 +470,31 @@ export const getUpvotedProducts = async () => {
     return [];
   }
 };
+
+export const getProductBySlug = async (slug: string) => {
+  try {
+    const product = await prisma.product.findUnique({
+      where: {
+        slug,
+      },
+      include: {
+        images: true,
+        categories: true,
+        comments: {
+          include: {
+            user: true,
+          },
+        },
+        upvotes: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    return product;
+  } catch (error) {
+    console.error("Error getting product by slug:", error);
+    return null;
+  }
+};
