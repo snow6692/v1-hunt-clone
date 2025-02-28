@@ -109,6 +109,12 @@ export async function getProductById(id: string) {
       include: {
         categories: true,
         images: true,
+        comments: {
+          include: {
+            user: true,
+          },
+        },
+        upvotes: true,
       },
     });
     if (!product) throw new Error("This product not found");
@@ -275,6 +281,7 @@ export async function rejectProduct(
         productId: product.id,
       },
     });
+    revalidatePath("/");
   } catch (error) {
     console.log(error);
   }
@@ -340,29 +347,30 @@ export async function upvoteProduct(productId: string | undefined) {
           userId,
         },
       });
-    }
 
-    const productOwner = await prisma.product.findUnique({
-      where: {
-        id: productId,
-      },
-      select: {
-        userId: true,
-      },
-    });
-    // notify the product owner about the upvote
-    if (productOwner && productOwner.userId !== userId) {
-      await prisma.notification.create({
-        data: {
-          userId: productOwner.userId,
-          body: `Upvoted your product`,
-          profilePicture: profilePicture,
-          productId: productId!,
-          type: "UPVOTE",
-          status: "UNREAD",
+      const productOwner = await prisma.product.findUnique({
+        where: {
+          id: productId,
+        },
+        select: {
+          userId: true,
         },
       });
+      // notify the product owner about the upvote
+      if (productOwner && productOwner.userId !== userId) {
+        await prisma.notification.create({
+          data: {
+            userId: productOwner.userId,
+            body: `Upvoted your product`,
+            profilePicture: profilePicture,
+            productId: productId!,
+            type: "UPVOTE",
+            status: "UNREAD",
+          },
+        });
+      }
     }
+
     return true;
   } catch (error) {
     console.error("Error upvoting product:", error);
@@ -526,3 +534,144 @@ export const getCategories = async () => {
 
   return categories;
 };
+
+export const getRankById = async (): Promise<
+  {
+    id: string;
+    name: string;
+    upvotes: { id: string }[];
+    rank: number;
+  }[]
+> => {
+  // Fetch products along with their upvote counts from the database
+  const rankedProducts = await prisma.product.findMany({
+    where: {
+      status: "ACTIVE",
+    },
+    select: {
+      id: true,
+      name: true,
+      upvotes: {
+        select: {
+          id: true,
+        },
+      },
+    },
+    orderBy: {
+      upvotes: {
+        _count: "desc", // Order by upvotes count in descending order
+      },
+    },
+  });
+
+  // Find the maximum number of upvotes among all products
+  const maxUpvotes =
+    rankedProducts.length > 0 ? rankedProducts[0].upvotes.length : 0;
+
+  // Assign ranks to each product based on their number of upvotes
+  const productsWithRanks = rankedProducts.map((product, index) => ({
+    ...product,
+    rank: product.upvotes.length === maxUpvotes ? 1 : index + 2,
+  }));
+
+  return productsWithRanks;
+};
+
+export const getNotifications = async () => {
+  try {
+    const authenticatedUser = await auth();
+
+    if (
+      !authenticatedUser ||
+      !authenticatedUser.user ||
+      !authenticatedUser.user.id
+    ) {
+      throw new Error("User ID is missing or invalid");
+    }
+
+    const userId = authenticatedUser.user.id;
+
+    const notifications = await prisma.notification.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    if (notifications.length === 0) {
+      return null;
+    }
+
+    return notifications;
+  } catch (error) {
+    console.error("Error getting notifications:", error);
+    return [];
+  }
+};
+
+export const deleteAllNotifications = async () => {
+  try {
+    const authenticatedUser = await auth();
+
+    if (
+      !authenticatedUser ||
+      !authenticatedUser.user ||
+      !authenticatedUser.user.id
+    ) {
+      throw new Error("User ID is missing or invalid");
+    }
+    const userId = authenticatedUser?.user.id;
+
+    await prisma.notification.deleteMany({
+      where: { userId },
+    });
+  } catch (error) {
+    console.error("Error While deleting all notifications:", error);
+
+    console.log(error);
+  }
+};
+
+export const markAllNotificationsAsRead = async () => {
+  try {
+    const authenticatedUser = await auth();
+
+    if (
+      !authenticatedUser ||
+      !authenticatedUser.user ||
+      !authenticatedUser.user.id
+    ) {
+      throw new Error("User ID is missing or invalid");
+    }
+
+    const userId = authenticatedUser?.user.id;
+
+    await prisma.notification.updateMany({
+      where: {
+        userId,
+      },
+      data: {
+        status: "READ",
+      },
+    });
+  } catch (error) {
+    console.error("Error marking all notifications as read:", error);
+    throw error;
+  }
+};
+
+export async function searchProducts(query: string) {
+  const products = await prisma.product.findMany({
+    where: {
+      name: {
+        contains: query,
+        mode: "insensitive",
+      },
+      status: "ACTIVE",
+    },
+  });
+
+  return products;
+}

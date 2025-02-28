@@ -25,8 +25,11 @@ async function MypProductsPage() {
         </div>
       ) : (
         <div>
-           <h1 className="text-3xl font-bold">Your products</h1>
+          <h1 className="text-3xl font-bold">Your products</h1>
           <p>Manage you products here</p>
+          <>
+            <p className="pt-6">({products.length}/2) free products</p>
+          </>
           <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-5">
             {products.map((product) => (
               <Link href={`edit/${product.id}`} key={product.id}>

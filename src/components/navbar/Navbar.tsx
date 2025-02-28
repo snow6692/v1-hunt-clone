@@ -11,11 +11,13 @@ import { User } from "next-auth";
 import AvatarComponent from "./Avatar";
 import NotificationIcon from "./NotificationIcon";
 import Submit from "./Submit";
+import { Notification } from "@prisma/client";
 
 interface IProps {
   user: User | undefined;
+  notifications: Notification[] | null;
 }
-function Navbar({ user }: IProps) {
+function Navbar({ user,notifications }: IProps) {
   const [authModalVisible, setAuthModalVisible] = useState(false);
 
   const handleButtonClick = () => {
@@ -36,7 +38,7 @@ function Navbar({ user }: IProps) {
           {user ? (
             <>
               <Submit />
-              <NotificationIcon />
+              <NotificationIcon notifications={notifications} />
               <AvatarComponent image={user.image!} />
             </>
           ) : (
