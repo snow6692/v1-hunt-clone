@@ -59,7 +59,10 @@ function ProductItem({ authenticatedUser, product }: IProps) {
   ) => {
     e.stopPropagation();
 
-    window.open(`${product.website}`, "_blank");
+    const fixedWebsite = product.website.startsWith("http")
+      ? product.website
+      : `https://${product.website}`;
+    window.open(fixedWebsite, "_blank");
   };
   const handleCategoryClick = (
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,

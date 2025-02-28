@@ -675,3 +675,41 @@ export async function searchProducts(query: string) {
 
   return products;
 }
+
+export const getProductsByUserId = async (userId: string | undefined) => {
+  const products = await prisma.product.findMany({
+    where: {
+      userId,
+    },
+  });
+
+  return products;
+};
+
+export const isUserPremium = async () => {
+  const authenticatedUser = await auth();
+
+  if (
+    !authenticatedUser ||
+    !authenticatedUser.user ||
+    !authenticatedUser.user.id
+  ) {
+    throw new Error("User ID is missing or invalid");
+  }
+
+  const userId = authenticatedUser.user.id;
+
+  // get the user
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user.isPremium;
+};

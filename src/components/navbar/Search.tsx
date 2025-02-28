@@ -3,7 +3,7 @@ import { searchProducts } from "@/lib/actions/productAction";
 import { Product } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { PiMagnifyingGlass } from "react-icons/pi";
 function Search() {
   const [query, setQuery] = useState("");
@@ -35,6 +35,23 @@ function Search() {
     setIsDropdownVisible(false);
     router.push(`/product/${slug}`);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownVisible(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
   return (
     <div className="relative ml-4 flex items-center rounded-full bg-[#f5f8ff] text-gray-500">
       <PiMagnifyingGlass className="ml-2" />

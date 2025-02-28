@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "stripe":"E:\\snow6692\\stripe.exe"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
@@ -35,6 +36,7 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "sonner": "^2.0.1",
+    "stripe": "^17.7.0",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^7.5.2"

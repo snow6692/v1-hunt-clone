@@ -1,13 +1,44 @@
 "use client";
 
-import Link from "next/link";
+import { Product } from "@prisma/client";
+import { User } from "next-auth";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import MembershipModal from "../modals/MembershipModal";
+import { isUserPremium } from "@/lib/actions/productAction";
+import UpgradeMembership from "../UpgradeMembership";
 
-const Submit = () => {
+interface IProps {
+  products: Product[];
+  user: User | undefined;
+}
+const Submit = ({ products, user }: IProps) => {
+  const [isUpgradeModalVisible, setIsUpgradeModalVisible] = useState(false);
+
+  const router = useRouter();
+
+  const handleClick = async () => {
+    const isPremium = await isUserPremium();
+    if (!isPremium && products.length === 2) {
+      setIsUpgradeModalVisible(true);
+    } else {
+      router.push("/new-product");
+    }
+  };
   return (
     <div className="">
-      <Link href={"/new-product"} className="text-[#ff6154]">
-        Submit
-      </Link>
+      <div>
+        <button onClick={handleClick} className="text-[#ff6154]">
+          Submit
+        </button>
+        <MembershipModal
+          visible={isUpgradeModalVisible}
+          setVisible={setIsUpgradeModalVisible}
+        >
+          Upgrade now
+          <UpgradeMembership authenticatedUser={user} />
+        </MembershipModal>
+      </div>
     </div>
   );
 };

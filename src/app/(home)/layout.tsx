@@ -1,18 +1,25 @@
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { auth } from "@/auth";
 import Navbar from "@/components/navbar/Navbar";
-import { Toaster } from "sonner";
-import { getNotifications } from "@/lib/actions/productAction";
+
+import {
+  getNotifications,
+  getProductsByUserId,
+} from "@/lib/actions/productAction";
+import Spinner from "@/components/Spinner";
 
 async function HomeLayout({ children }: { children: ReactNode }) {
   const session = await auth();
   const user = await session?.user;
   const notifications = await getNotifications();
+  const products = await getProductsByUserId(user?.id);
   return (
     <div>
-      <Navbar user={user} notifications={notifications} />
-      {children}
-      <Toaster position="top-center" />
+      <Suspense fallback={<Spinner />}>
+        <Navbar user={user} notifications={notifications} products={products} />
+
+        {children}
+      </Suspense>
     </div>
   );
 }
