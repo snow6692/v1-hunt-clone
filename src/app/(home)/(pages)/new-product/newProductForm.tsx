@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { LogoUploader } from "@/components/LogoUploader";
 import { CATEGORIES } from "@/constants/constants";
 import Image from "next/image";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, Suspense } from "react";
 import {
   Popover,
   PopoverContent,
@@ -367,14 +367,16 @@ function NewProductForm() {
                 <div className="mt-2 gap-2 space-y-4 md:flex md:space-y-0">
                   {uploadedProductImages.map((url, index) => (
                     <div key={index} className="relative h-40 md:w-40">
-                      <Image
-                        priority
-                        src={url}
-                        alt="Uploaded Product Image"
-                        layout="fill"
-                        objectFit="cover"
-                        className="rounded-md"
-                      />
+                      <Suspense fallback={}>
+                        <Image
+                          priority
+                          src={url}
+                          alt="Uploaded Product Image"
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-md"
+                        />
+                      </Suspense>
                     </div>
                   ))}
                 </div>

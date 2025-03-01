@@ -7,6 +7,7 @@ import {
 } from "@/lib/actions/productAction";
 
 import { redirect } from "next/navigation";
+import { Toaster } from "sonner";
 
 const NewProductLayout = async ({
   children,
@@ -36,6 +37,7 @@ const NewProductLayout = async ({
         <Navbar user={user} products={products} notifications={notifications} />
 
         {children}
+        <Toaster position="top-center" />
       </body>
     </html>
   );
