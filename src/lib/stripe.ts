@@ -19,8 +19,8 @@ export const createCheckoutSession = async ({
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
-      success_url: "http://localhost:3000/new-product",
-      cancel_url: "http://localhost:3000/",
+      success_url: "https://product-hunt.ahmedha.site/new-product",
+      cancel_url: "https://product-hunt.ahmedha.site",
     });
     return { url: session.url };
   } catch (error) {
@@ -62,7 +62,7 @@ export const createCustomerLink = async () => {
 
     const portal = await stripe.billingPortal.sessions.create({
       customer: customer.id,
-      return_url: `http://localhost:3000/my-products`,
+      return_url: `https://product-hunt.ahmedha.site/my-products`,
     });
 
     return portal.url;
@@ -73,12 +73,15 @@ export const createCustomerLink = async () => {
   }
 };
 
-
 export const getNextPaymentDetails = async () => {
   try {
     const authenticatedUser = await auth();
 
-    if (!authenticatedUser || !authenticatedUser.user || !authenticatedUser.user.email) {
+    if (
+      !authenticatedUser ||
+      !authenticatedUser.user ||
+      !authenticatedUser.user.email
+    ) {
       throw new Error("User not authenticated");
     }
 
@@ -96,7 +99,7 @@ export const getNextPaymentDetails = async () => {
 
     const subscriptions = await stripe.subscriptions.list({
       customer: customer.id,
-      status: 'active',
+      status: "active",
     });
 
     if (!subscriptions || subscriptions.data.length === 0) {
@@ -106,13 +109,16 @@ export const getNextPaymentDetails = async () => {
     const subscription = subscriptions.data[0];
 
     const nextPaymentDate = new Date(subscription.current_period_end * 1000); // Convert timestamp to Date
-    
+
     // Format date to MM/DD/YYYY
-    const formattedNextPaymentDate = nextPaymentDate.toLocaleDateString('en-US', {
-      month: '2-digit',
-      day: '2-digit',
-      year: 'numeric'
-    });
+    const formattedNextPaymentDate = nextPaymentDate.toLocaleDateString(
+      "en-US",
+      {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+      },
+    );
 
     const priceId = subscription.items.data[0].price.id;
     const price = await stripe.prices.retrieve(priceId);
