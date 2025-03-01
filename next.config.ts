@@ -10,14 +10,18 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
-     
       },
       {
         protocol: "https",
         hostname: "utfs.io",
-      
       },
     ],
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 

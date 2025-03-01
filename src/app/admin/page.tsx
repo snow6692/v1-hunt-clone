@@ -1,5 +1,11 @@
 import Logo from "@/components/navbar/Logo";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 import { PiBell, PiGear } from "react-icons/pi";
@@ -13,6 +19,8 @@ import {
   getTotalUpvotes,
   getUsers,
 } from "@/lib/actions/productAction";
+import OverviewChart from "@/components/OverViewChart";
+import RecentActivity from "@/components/RecentActivity";
 
 const AdminPage = async () => {
   const session = await auth();
@@ -57,7 +65,7 @@ const AdminPage = async () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-md font-bold">Premium Users</CardTitle>
+              <CardTitle className="text-md font-bold">Premium Users</CardTitle>{" "}
               💰
             </CardHeader>
             <CardContent>{premiumUsers.length}</CardContent>
@@ -67,7 +75,7 @@ const AdminPage = async () => {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-md font-bold">
                 Active Products
-              </CardTitle>
+              </CardTitle>{" "}
               📦
             </CardHeader>
             <CardContent>{activeProducts.length}</CardContent>
@@ -77,7 +85,7 @@ const AdminPage = async () => {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-md font-bold">
                 Pending Products
-              </CardTitle>
+              </CardTitle>{" "}
               🕒
             </CardHeader>
             <CardContent>{pendingProducts.length}</CardContent>
@@ -101,12 +109,34 @@ const AdminPage = async () => {
           </Card>
         </div>
 
+        <div className="my-4 grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="col-span-4">
+            <CardHeader>
+              <CardTitle className="pb-10">Overview</CardTitle>
+            </CardHeader>
+            <CardContent className="pl-2">
+              <OverviewChart data={data} />
+            </CardContent>
+          </Card>
+
+          <Card className="col-span-4 w-full md:col-span-3">
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>View recent activity</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RecentActivity users={users} />
+            </CardContent>
+          </Card>
+        </div>
+
         <Separator className="my-10" />
+
         <div className="space-y-10 pb-10">
           <h1 className="text-2xl font-bold">Pending Products</h1>
           <PendingProducts
-            authenticatedUser={user}
             pendingProducts={pendingProducts}
+            authenticatedUser={user}
           />
         </div>
       </div>
