@@ -713,3 +713,78 @@ export const isUserPremium = async () => {
 
   return user.isPremium;
 };
+
+export const getRejectedProducts = async () => {
+  const products = await prisma.product.findMany({
+    where: {
+      status: "REJECTED",
+    },
+    include: {
+      categories: true,
+      images: true,
+    },
+  });
+
+  return products;
+};
+
+export const getUsers = async () => {
+  const users = await prisma.user.findMany();
+
+  return users;
+};
+
+export const getTotalUpvotes = async () => {
+  const totalUpvotes = await prisma.upvote.count({
+    where: {
+      product: {
+        status: "ACTIVE",
+      },
+    },
+  });
+  return totalUpvotes;
+};
+
+export const getCurrentUser = async () => {
+  const authenticatedUser = await auth();
+
+  if (
+    !authenticatedUser ||
+    !authenticatedUser.user ||
+    !authenticatedUser.user.id
+  ) {
+    throw new Error("User ID is missing or invalid");
+  }
+
+  const userId = authenticatedUser.user.id;
+
+  // get the user
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user;
+};
+
+export const getAdminData = async () => {
+  const totalProducts = await prisma.product.count();
+  const totalUsers = await prisma.user.count();
+  const totalUpvotes = await prisma.upvote.count();
+  const totalComments = await prisma.comment.count();
+  const totalCategories = await prisma.category.count();
+
+  return {
+    totalProducts,
+    totalUsers,
+    totalUpvotes,
+    totalComments,
+    totalCategories,
+  };
+};

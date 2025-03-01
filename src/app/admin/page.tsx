@@ -5,13 +5,27 @@ import { Separator } from "@/components/ui/separator";
 import { PiBell, PiGear } from "react-icons/pi";
 import PendingProducts from "./PendingProduct";
 import { auth } from "@/auth";
-import { getPendingProducts } from "@/lib/actions/productAction";
+import {
+  getActiveProducts,
+  getAdminData,
+  getPendingProducts,
+  getRejectedProducts,
+  getTotalUpvotes,
+  getUsers,
+} from "@/lib/actions/productAction";
 
-const Admin = async () => {
+const AdminPage = async () => {
   const session = await auth();
   const user = await session?.user;
+  const users = await getUsers();
+  const activeProducts = await getActiveProducts();
+  const rejectedProducts = await getRejectedProducts();
+  const totalUpvotes = await getTotalUpvotes();
+  const data = await getAdminData();
+  const premiumUsers = users.filter((user) => user.isPremium);
 
   const pendingProducts = await getPendingProducts();
+
   console.log(pendingProducts);
   return (
     <div className="px-8 md:px-20">
@@ -38,25 +52,25 @@ const Admin = async () => {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-md font-bold">Users</CardTitle>👤
             </CardHeader>
-            <CardContent>0</CardContent>
+            <CardContent>{users.length}</CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-md font-bold">Premium Users</CardTitle>{" "}
+              <CardTitle className="text-md font-bold">Premium Users</CardTitle>
               💰
             </CardHeader>
-            <CardContent>0</CardContent>
+            <CardContent>{premiumUsers.length}</CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-md font-bold">
                 Active Products
-              </CardTitle>{" "}
+              </CardTitle>
               📦
             </CardHeader>
-            <CardContent>0</CardContent>
+            <CardContent>{activeProducts.length}</CardContent>
           </Card>
 
           <Card>
@@ -66,7 +80,7 @@ const Admin = async () => {
               </CardTitle>
               🕒
             </CardHeader>
-            <CardContent>0</CardContent>
+            <CardContent>{pendingProducts.length}</CardContent>
           </Card>
 
           <Card>
@@ -76,14 +90,14 @@ const Admin = async () => {
               </CardTitle>
               👤
             </CardHeader>
-            <CardContent>0</CardContent>
+            <CardContent>{rejectedProducts.length}</CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-md font-bold">Upvotes</CardTitle> 🔺
             </CardHeader>
-            <CardContent>0</CardContent>
+            <CardContent>{totalUpvotes}</CardContent>
           </Card>
         </div>
 
@@ -100,4 +114,4 @@ const Admin = async () => {
   );
 };
 
-export default Admin;
+export default AdminPage;

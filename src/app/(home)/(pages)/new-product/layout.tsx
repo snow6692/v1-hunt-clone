@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
-// import Navbar from "@/components/navbar/Navbar";
+import Navbar from "@/components/navbar/Navbar";
 import {
-  // getNotifications,
+  getNotifications,
   getProductsByUserId,
   isUserPremium,
 } from "@/lib/actions/productAction";
@@ -16,7 +16,7 @@ const NewProductLayout = async ({
   const session = await auth();
   const user = await session?.user;
 
-  // const notifications = await getNotifications();
+  const notifications = await getNotifications();
 
   const products = await getProductsByUserId(user?.id || "");
 
@@ -33,7 +33,7 @@ const NewProductLayout = async ({
   return (
     <html lang="en">
       <body>
-        {/* <Navbar user={user} products={products} notifications={notifications} /> */}
+        <Navbar user={user} products={products} notifications={notifications} />
 
         {children}
       </body>

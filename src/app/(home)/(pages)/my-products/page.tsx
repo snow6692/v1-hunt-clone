@@ -1,11 +1,12 @@
-import { getOwnerProducts } from "@/lib/actions/productAction";
+import { getOwnerProducts, isUserPremium } from "@/lib/actions/productAction";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { PiPlus } from "react-icons/pi";
+import { PiCrown, PiPlus } from "react-icons/pi";
 
 async function MypProductsPage() {
   const products = await getOwnerProducts();
+  const isPremium = await isUserPremium();
 
   return (
     <div className="mx-auto px-6 py-10 lg:w-3/5">
@@ -27,9 +28,18 @@ async function MypProductsPage() {
         <div>
           <h1 className="text-3xl font-bold">Your products</h1>
           <p>Manage you products here</p>
-          <>
-            <p className="pt-6">({products.length}/2) free products</p>
-          </>
+          {isPremium ? (
+            <div className="mt-10 flex items-center gap-x-4">
+              <PiCrown className="text-2xl text-orange-300" />
+              <p className="text-lg">You are a premium user</p>
+            </div>
+          ) : (
+            <>
+              <p className="pt-6">({products.length} / 2) free products </p>
+            </>
+          )}
+
+          <></>
           <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-5">
             {products.map((product) => (
               <Link href={`edit/${product.id}`} key={product.id}>

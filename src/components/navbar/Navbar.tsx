@@ -15,7 +15,7 @@ import { Notification, Product } from "@prisma/client";
 
 interface IProps {
   user: User | undefined;
-  notifications: Notification[] | null;
+  notifications?: Notification[] | null;
   products: Product[];
 }
 function Navbar({ user, notifications, products }: IProps) {
