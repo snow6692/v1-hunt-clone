@@ -367,16 +367,14 @@ function NewProductForm() {
                 <div className="mt-2 gap-2 space-y-4 md:flex md:space-y-0">
                   {uploadedProductImages.map((url, index) => (
                     <div key={index} className="relative h-40 md:w-40">
-                      <Suspense fallback={}>
-                        <Image
-                          priority
-                          src={url}
-                          alt="Uploaded Product Image"
-                          layout="fill"
-                          objectFit="cover"
-                          className="rounded-md"
-                        />
-                      </Suspense>
+                      <Image
+                        priority
+                        src={url}
+                        alt="Uploaded Product Image"
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-md"
+                      />
                     </div>
                   ))}
                 </div>
