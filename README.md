@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Product Hunt Clone – SaaS Platform
 
-## Getting Started
+A full-stack platform for submitting and discovering new products, with real-time feedback and a powerful community-based voting system.
 
-First, run the development server:
+## 🧩 Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🔗 Product Submission
+- Multi-step form with full product details (title, description, launch date, category, images, website, logo).
+- Edit & Resubmit feature – editing hides product until admin approval again.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🔒 Admin Moderation
+- Products go to admin for approval or rejection.
+- Rejection includes a feedback reason.
+- Real-time notifications for approval/rejection status.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🔔 Notifications
+- Users receive instant updates about their product status.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 💬 Community Engagement
+- Upvotes and comments system for users.
+- Live ranking – the top voted product becomes Rank #1.
+- Pagination and filtering by category or keyword.
 
-## Learn More
+### 👤 User Pages
+- **My Products:** View and manage your submissions.
+- **My Upvotes:** View all products you've upvoted.
+- **New Product:** First 2 submissions are free, then requires a paid subscription.
 
-To learn more about Next.js, take a look at the following resources:
+### 💳 Payments
+- Monthly subscription for submitting more than 2 products.
+- Integrated with Stripe for secure payment handling.
+- Users can cancel or manage their subscription from the settings page.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ⚙️ Tech Stack
 
-## Deploy on Vercel
+- **Next.js 15**
+- **Prisma & PostgreSQL**
+- **Stripe (Subscriptions & Payments)**
+- **Auth.js (Google OAuth)**
+- **Tailwind CSS & ShadCN UI**
+- **Framer Motion (Animations)**
+- **Recharts (Dashboard Visualization)**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔗 Links
+
+- **Live Site:** [https://product-hunt.ahmedha.site](https://product-hunt.ahmedha.site)  
+- **GitHub Repository:** [https://github.com/snow6692/v1-hunt-clone](https://github.com/snow6692/v1-hunt-clone)
+
+---
+
+## 🙌 Author
+
+Developed by [Ahmed](https://www.linkedin.com/posts/ahmed-hamada-a83309239_id-like-to-show-you-my-new-project-a-product-activity-7302180906822254592-EYQq?utm_source=share&utm_medium=member_desktop&rcm=ACoAADtP9sMBLkj7xcgfHMKup7JtZS9cX6MfViY) – feel free to connect or give feedback!
